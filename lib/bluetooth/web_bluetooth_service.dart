@@ -6,7 +6,7 @@ external Bluetooth? get bluetooth;
 
 @JS()
 @staticInterop
-class Bluetooth implements JSObject {}
+class Bluetooth {}
 
 extension BluetoothExtension on Bluetooth {
   external JSPromise<BluetoothDevice> requestDevice(RequestOptions options);
@@ -14,7 +14,7 @@ extension BluetoothExtension on Bluetooth {
 
 @JS()
 @staticInterop
-class BluetoothDevice implements JSObject {}
+class BluetoothDevice {}
 
 extension BluetoothDeviceExtension on BluetoothDevice {
   external JSString get id;
@@ -24,7 +24,7 @@ extension BluetoothDeviceExtension on BluetoothDevice {
 
 @JS()
 @staticInterop
-class BluetoothRemoteGATTServer implements JSObject {}
+class BluetoothRemoteGATTServer {}
 
 extension BluetoothRemoteGATTServerExtension on BluetoothRemoteGATTServer {
   external JSPromise<BluetoothRemoteGATTService> getPrimaryService(
@@ -35,7 +35,7 @@ extension BluetoothRemoteGATTServerExtension on BluetoothRemoteGATTServer {
 
 @JS()
 @staticInterop
-class BluetoothRemoteGATTService implements JSObject {}
+class BluetoothRemoteGATTService {}
 
 extension BluetoothRemoteGATTServiceExtension on BluetoothRemoteGATTService {
   external JSPromise<BluetoothRemoteGATTCharacteristic> getCharacteristic(
@@ -44,7 +44,7 @@ extension BluetoothRemoteGATTServiceExtension on BluetoothRemoteGATTService {
 
 @JS()
 @staticInterop
-class BluetoothRemoteGATTCharacteristic implements JSObject {}
+class BluetoothRemoteGATTCharacteristic {}
 
 extension BluetoothRemoteGATTCharacteristicExtension
     on BluetoothRemoteGATTCharacteristic {
@@ -59,7 +59,7 @@ extension BluetoothRemoteGATTCharacteristicExtension
 @JS()
 @anonymous
 @staticInterop
-class RequestOptions implements JSObject {
+class RequestOptions {
   external factory RequestOptions({
     JSArray<BluetoothScanFilter> filters,
     JSArray<JSString> optionalServices,
@@ -69,7 +69,7 @@ class RequestOptions implements JSObject {
 @JS()
 @anonymous
 @staticInterop
-class BluetoothScanFilter implements JSObject {
+class BluetoothScanFilter {
   external factory BluetoothScanFilter({
     JSArray<JSString> services,
   });
@@ -77,7 +77,7 @@ class BluetoothScanFilter implements JSObject {
 
 @JS('DataView')
 @staticInterop
-class JSDataView implements JSObject {}
+class JSDataView {}
 
 extension JSDataViewExtension on JSDataView {
   external int getInt16(int byteOffset, [bool littleEndian]);
@@ -86,7 +86,7 @@ extension JSDataViewExtension on JSDataView {
 // Interop definitions for Event handling
 @JS()
 @staticInterop
-class Event implements JSObject {}
+class Event {}
 
 extension EventExtension on Event {
   external EventTarget? get target;
@@ -94,7 +94,7 @@ extension EventExtension on Event {
 
 @JS()
 @staticInterop
-class EventTarget implements JSObject {}
+class EventTarget {}
 
 extension EventTargetExtension on EventTarget {
   external JSDataView? get value;

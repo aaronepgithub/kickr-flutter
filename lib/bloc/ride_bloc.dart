@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kickr_flutter/bloc/ride_event.dart';
 import 'package:kickr_flutter/bloc/ride_state.dart';
 import 'package:kickr_flutter/bluetooth/ftms_service.dart';
 import 'package:kickr_flutter/gpx/course.dart';
+import 'package:kickr_flutter/highscore/high_score.dart';
 import 'package:kickr_flutter/highscore/high_score_repository.dart';
 import 'package:kickr_flutter/simulation/ride_simulation.dart';
 import 'package:kickr_flutter/simulation/ride_state.dart' as sim;

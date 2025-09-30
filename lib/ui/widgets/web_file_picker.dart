@@ -22,13 +22,14 @@ Future<WebFile?> pickFile() async {
 
   input.onchange = (JSAny? _) {
     final files = input.files;
-    if (files.isNotEmpty) {
-      final file = files.toDart.first! as File;
+    if (files.length > 0) {
+      final file = files[0]! as File;
       // The arrayBuffer() method returns a promise that resolves with an ArrayBuffer.
       final promise = file.arrayBuffer();
       promise.toDart.then((arrayBuffer) {
-        final bytes = (arrayBuffer! as JSArrayBuffer).toDart;
-        completer.complete(WebFile(name: file.name.toDart, bytes: bytes));
+        final byteBuffer = (arrayBuffer! as JSArrayBuffer).toDart;
+        completer.complete(WebFile(
+            name: file.name.toDart, bytes: byteBuffer.asUint8List()));
       });
     } else {
       completer.complete(null);
@@ -62,17 +63,17 @@ extension DocumentExtension on Document {
 
 @JS()
 @staticInterop
-class HTMLElement implements JSObject {}
+class HTMLElement {}
 
 extension HTMLElementExtension on HTMLElement {
-  external void appendChild(JSObject child);
-  external void removeChild(JSObject child);
-  external JSObject get style;
+  external void appendChild(HTMLElement child);
+  external void removeChild(HTMLElement child);
+  external CSSStyleDeclaration get style;
 }
 
 @JS()
 @staticInterop
-class HTMLInputElement implements HTMLElement {}
+class HTMLInputElement extends HTMLElement {}
 
 extension HTMLInputElementExtension on HTMLInputElement {
   external set accept(JSString v);
@@ -84,9 +85,17 @@ extension HTMLInputElementExtension on HTMLInputElement {
 
 @JS('File')
 @staticInterop
-class File implements JSObject {}
+class File {}
 
 extension FileExtension on File {
   external JSString get name;
   external JSPromise<JSArrayBuffer> arrayBuffer();
+}
+
+@JS()
+@staticInterop
+class CSSStyleDeclaration {}
+
+extension CSSStyleDeclarationExtension on CSSStyleDeclaration {
+  external void setProperty(JSString propertyName, JSString value);
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kickr_flutter/bluetooth/ftms_service.dart';
@@ -6,8 +8,13 @@ import 'package:kickr_flutter/highscore/high_score_repository.dart';
 import 'package:kickr_flutter/ui/screens/course_selection_screen.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runZonedGuarded(() {
+    WidgetsFlutterBinding.ensureInitialized();
+    runApp(const MyApp());
+  }, (error, stack) {
+    print('Caught unhandled error: $error');
+    print(stack);
+  });
 }
 
 class MyApp extends StatelessWidget {

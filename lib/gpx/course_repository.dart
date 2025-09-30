@@ -26,7 +26,9 @@ class CourseRepository {
     }
 
     final List<dynamic> courseList = jsonDecode(coursesJsonString);
+    // Defensively filter out any invalid entries before mapping
     return courseList
+        .where((json) => json is Map<String, dynamic>)
         .map((json) => Course.fromJson(json as Map<String, dynamic>))
         .toList();
   }

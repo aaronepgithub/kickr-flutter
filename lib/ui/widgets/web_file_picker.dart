@@ -99,11 +99,3 @@ class CSSStyleDeclaration {}
 extension CSSStyleDeclarationExtension on CSSStyleDeclaration {
   external void setProperty(JSString propertyName, JSString value);
 }
-
-@JS('ArrayBuffer')
-@staticInterop
-class JSArrayBuffer {}
-
-extension JSArrayBufferExtension on JSArrayBuffer {
-  external ByteBuffer toDart;
-}

@@ -31,7 +31,7 @@ class FtmsService {
     ];
     final jsFilters = JSArray<JSAny?>.withLength(filters.length);
     for (var i = 0; i < filters.length; i++) {
-        jsFilters[i] = filters[i];
+        jsFilters[i] = filters[i] as JSAny;
     }
 
     final options = RequestOptions(

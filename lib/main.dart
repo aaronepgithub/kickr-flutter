@@ -6,6 +6,7 @@ import 'package:kickr_flutter/highscore/high_score_repository.dart';
 import 'package:kickr_flutter/ui/screens/course_selection_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

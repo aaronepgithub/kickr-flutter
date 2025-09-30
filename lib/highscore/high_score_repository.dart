@@ -33,16 +33,19 @@ class HighScoreRepository {
       return {};
     }
 
-    // Decode the main JSON string into a map
     final Map<String, dynamic> highScoresJson =
         jsonDecode(highScoresJsonString);
 
-    // Convert the inner JSON objects back to HighScore objects
-    return highScoresJson.map(
-      (key, value) => MapEntry(
-        key,
-        HighScore.fromJson(value as Map<String, dynamic>),
-      ),
-    );
+    final validEntries = highScoresJson.entries.where((entry) {
+      // Ensure the value is a valid map before trying to decode it.
+      return entry.value is Map<String, dynamic>;
+    }).map((entry) {
+      return MapEntry(
+        entry.key,
+        HighScore.fromJson(entry.value as Map<String, dynamic>),
+      );
+    });
+
+    return Map.fromEntries(validEntries);
   }
 }

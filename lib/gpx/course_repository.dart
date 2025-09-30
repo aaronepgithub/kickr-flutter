@@ -13,15 +13,21 @@ class CourseRepository {
     courses.removeWhere((c) => c.name == course.name);
     courses.add(course);
 
-    final coursesJson = courses.map((c) => jsonEncode(c.toJson())).toList();
-    await prefs.setStringList(_coursesKey, coursesJson);
+    final courseListForJson = courses.map((c) => c.toJson()).toList();
+    await prefs.setString(_coursesKey, jsonEncode(courseListForJson));
   }
 
   Future<List<Course>> getCourses() async {
     final prefs = await SharedPreferences.getInstance();
-    final coursesJson = prefs.getStringList(_coursesKey) ?? [];
-    return coursesJson
-        .map((json) => Course.fromJson(jsonDecode(json)))
+    final coursesJsonString = prefs.getString(_coursesKey);
+
+    if (coursesJsonString == null) {
+      return [];
+    }
+
+    final List<dynamic> courseList = jsonDecode(coursesJsonString);
+    return courseList
+        .map((json) => Course.fromJson(json as Map<String, dynamic>))
         .toList();
   }
 
@@ -30,40 +36,10 @@ class CourseRepository {
     final courses = await getCourses();
     courses.removeWhere((c) => c.name == courseName);
 
-    final coursesJson = courses.map((c) => jsonEncode(c.toJson())).toList();
-    await prefs.setStringList(_coursesKey, coursesJson);
+    final courseListForJson = courses.map((c) => c.toJson()).toList();
+    await prefs.setString(_coursesKey, jsonEncode(courseListForJson));
   }
 }
 
-// Add JSON serialization to the Course and CoursePoint models
-extension on Course {
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'points': points.map((p) => p.toJson()).toList(),
-        'totalDistance': totalDistance,
-      };
-
-  static Course fromJson(Map<String, dynamic> json) => Course(
-        name: json['name'],
-        points: (json['points'] as List)
-            .map((p) => CoursePoint.fromJson(p))
-            .toList(),
-        totalDistance: json['totalDistance'],
-      );
-}
-
-extension on CoursePoint {
-  Map<String, dynamic> toJson() => {
-        'lat': lat,
-        'lon': lon,
-        'elevation': elevation,
-        'distance': distance,
-      };
-
-  static CoursePoint fromJson(Map<String, dynamic> json) => CoursePoint(
-        lat: json['lat'],
-        lon: json['lon'],
-        elevation: json['elevation'],
-        distance: json['distance'],
-      );
-}
+// The extensions on Course and CoursePoint for toJson/fromJson are in course.dart
+// and do not need to be repeated here.

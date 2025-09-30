@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kickr_flutter/bloc/course_selection_bloc.dart';
@@ -9,6 +8,7 @@ import 'package:kickr_flutter/gpx/course.dart';
 import 'package:kickr_flutter/gpx/course_repository.dart';
 import 'package:kickr_flutter/highscore/high_score_repository.dart';
 import 'package:kickr_flutter/ui/screens/ride_screen.dart';
+import 'package:kickr_flutter/ui/widgets/web_file_picker.dart';
 
 class CourseSelectionScreen extends StatelessWidget {
   const CourseSelectionScreen({super.key});
@@ -114,15 +114,11 @@ class CourseSelectionScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            final result = await FilePicker.platform.pickFiles(
-              type: FileType.custom,
-              allowedExtensions: ['gpx'],
-              withData: true,
-            );
+            final result = await pickFile();
 
-            if (result != null && result.files.single.bytes != null) {
-              final fileBytes = result.files.single.bytes!;
-              final fileName = result.files.single.name;
+            if (result != null) {
+              final fileBytes = result.bytes;
+              final fileName = result.name;
               final gpxString = String.fromCharCodes(fileBytes);
 
               // ignore: use_build_context_synchronously

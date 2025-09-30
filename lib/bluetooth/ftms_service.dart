@@ -31,22 +31,26 @@ class FtmsService {
     );
 
     try {
-      _device = await bt.requestDevice(options).toDart;
+      final device = await bt.requestDevice(options).toDart;
+      _device = device as BluetoothDevice?;
       if (_device == null) return false;
 
       await _device!.gatt!.connect().toDart;
-      final service = await _device!.gatt!.getPrimaryService(ftmsServiceUUID.toJS).toDart;
+      final service = await _device!.gatt!.getPrimaryService(ftmsServiceUUID.toJS).toDart as BluetoothRemoteGATTService;
 
       // Get characteristics
-      _controlPointCharacteristic = await service.getCharacteristic(fitnessMachineControlPointCharacteristicUUID.toJS).toDart;
-      final indoorBikeDataCharacteristic = await service.getCharacteristic(indoorBikeDataCharacteristicUUID.toJS).toDart;
+      _controlPointCharacteristic = await service.getCharacteristic(fitnessMachineControlPointCharacteristicUUID.toJS).toDart as BluetoothRemoteGATTCharacteristic;
+      final indoorBikeDataCharacteristic = await service.getCharacteristic(indoorBikeDataCharacteristicUUID.toJS).toDart as BluetoothRemoteGATTCharacteristic;
 
       // Subscribe to power notifications
       await indoorBikeDataCharacteristic.startNotifications().toDart;
-      indoorBikeDataCharacteristic.oncharacteristicvaluechanged = (JSEvent event) {
-        final value = getProperty(event.target, 'value') as JSDataView;
-        final power = value.getInt16(2, true); // littleEndian = true
-        _powerController.add(power);
+      indoorBikeDataCharacteristic.oncharacteristicvaluechanged = (Event event) {
+        final characteristic = event.target as EventTarget;
+        final value = characteristic.value;
+        if (value != null) {
+          final power = value.getInt16(2, true); // littleEndian = true
+          _powerController.add(power);
+        }
       }.toJS;
 
       await requestControl();
@@ -62,7 +66,7 @@ class FtmsService {
     if (_controlPointCharacteristic != null) {
       final command = Uint8List.fromList([0x00]); // Op Code for Request Control
       try {
-        await _controlPointCharacteristic!.writeValue(command.toJS).toDart;
+        await _controlPointCharacteristic!.writeValue(command.buffer.toJS).toDart;
         print("Requested FTMS control");
       } catch (e) {
         print('Error requesting control: $e');
@@ -73,15 +77,13 @@ class FtmsService {
   Future<void> setSimulationParameters(double grade) async {
     if (_controlPointCharacteristic != null) {
       // Op Code 0x11 for Set Indoor Bike Simulation Parameters
-      final command = ByteData(7);
+      final command = ByteData(5);
       command.setUint8(0, 0x11);
-      command.setInt16(1, 0, Endian.little); // Wind Speed (0)
-      command.setInt16(3, (grade * 10000).round(), Endian.little); // Grade (e.g., 0.05 -> 500)
-      command.setUint8(5, 50); // Crr (0.005 -> 50)
-      command.setUint8(6, 12); // Cw (0.1225 -> 12)
+      // Wind Speed and Crr are not used in the simplified command
+      command.setInt16(1, (grade * 100).round(), Endian.little); // Grade scaled by 100
+      command.setInt16(3, 0, Endian.little); // Crr set to 0
 
       try {
-        // Using command.buffer.toJS to pass the underlying ArrayBuffer
         await _controlPointCharacteristic!.writeValue(command.buffer.toJS).toDart;
       } catch (e) {
         print('Error setting simulation parameters: $e');
@@ -92,10 +94,9 @@ class FtmsService {
   Future<void> setResistance(int resistance) async {
     if (_controlPointCharacteristic != null) {
       // Op Code 0x04 for Set Target Resistance Level
-      // Resistance is a UINT8
       final command = Uint8List.fromList([0x04, resistance]);
       try {
-        await _controlPointCharacteristic!.writeValue(command.toJS).toDart;
+        await _controlPointCharacteristic!.writeValue(command.buffer.toJS).toDart;
       } catch (e) {
         print('Error setting resistance: $e');
       }
@@ -107,7 +108,3 @@ class FtmsService {
     _powerController.close();
   }
 }
-
-// Helper to get a property from a JSObject
-@JS('Object.getOwnPropertyDescriptor(obj, prop).value')
-external JSAny? getProperty(JSObject obj, JSString prop);

@@ -11,10 +11,12 @@ class HighScoreRepository {
     final highScores = await getAllHighScores();
     highScores[highScore.courseName] = highScore;
 
+    // Convert the map of HighScore objects to a map of JSON objects
     final highScoresJson = highScores.map(
-      (key, value) => MapEntry(key, jsonEncode(value.toJson())),
+      (key, value) => MapEntry(key, value.toJson()),
     );
 
+    // Encode the entire map to a single JSON string
     await prefs.setString(_highScoresKey, jsonEncode(highScoresJson));
   }
 
@@ -31,12 +33,15 @@ class HighScoreRepository {
       return {};
     }
 
+    // Decode the main JSON string into a map
     final Map<String, dynamic> highScoresJson =
         jsonDecode(highScoresJsonString);
+
+    // Convert the inner JSON objects back to HighScore objects
     return highScoresJson.map(
       (key, value) => MapEntry(
         key,
-        HighScore.fromJson(jsonDecode(value)),
+        HighScore.fromJson(value as Map<String, dynamic>),
       ),
     );
   }

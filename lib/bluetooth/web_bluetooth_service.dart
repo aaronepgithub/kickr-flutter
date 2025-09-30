@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:js_interop';
 
 @JS('navigator.bluetooth')
@@ -9,7 +8,7 @@ external Bluetooth? get bluetooth;
 class Bluetooth {}
 
 extension BluetoothExtension on Bluetooth {
-  external JSPromise<BluetoothDevice> requestDevice(RequestOptions options);
+  external JSPromise<JSAny?> requestDevice(RequestOptions options);
 }
 
 @JS()
@@ -27,9 +26,8 @@ extension BluetoothDeviceExtension on BluetoothDevice {
 class BluetoothRemoteGATTServer {}
 
 extension BluetoothRemoteGATTServerExtension on BluetoothRemoteGATTServer {
-  external JSPromise<BluetoothRemoteGATTService> getPrimaryService(
-      JSString service);
-  external JSPromise<JSObject> connect();
+  external JSPromise<JSAny?> getPrimaryService(JSString service);
+  external JSPromise<JSAny?> connect();
   external void disconnect();
 }
 
@@ -38,8 +36,7 @@ extension BluetoothRemoteGATTServerExtension on BluetoothRemoteGATTServer {
 class BluetoothRemoteGATTService {}
 
 extension BluetoothRemoteGATTServiceExtension on BluetoothRemoteGATTService {
-  external JSPromise<BluetoothRemoteGATTCharacteristic> getCharacteristic(
-      JSString characteristic);
+  external JSPromise<JSAny?> getCharacteristic(JSString characteristic);
 }
 
 @JS()
@@ -48,10 +45,11 @@ class BluetoothRemoteGATTCharacteristic {}
 
 extension BluetoothRemoteGATTCharacteristicExtension
     on BluetoothRemoteGATTCharacteristic {
-  external JSPromise<JSAny> startNotifications();
-  external JSPromise<JSAny> stopNotifications();
-  external JSPromise<JSAny> writeValue(JSObject value);
-  external JSPromise<JSDataView> readValue();
+  external JSPromise<JSAny?> startNotifications();
+  external JSPromise<JSAny?> stopNotifications();
+  external JSPromise<JSAny?> writeValue(JSObject value);
+  external JSPromise<JSAny?> readValue();
+  external JSDataView? get value;
 
   external set oncharacteristicvaluechanged(JSFunction f);
 }
@@ -61,7 +59,7 @@ extension BluetoothRemoteGATTCharacteristicExtension
 @staticInterop
 class RequestOptions {
   external factory RequestOptions({
-    JSArray<BluetoothScanFilter> filters,
+    JSArray<JSAny?> filters,
     JSArray<JSString> optionalServices,
   });
 }
@@ -83,19 +81,10 @@ extension JSDataViewExtension on JSDataView {
   external int getInt16(int byteOffset, [bool littleEndian]);
 }
 
-// Interop definitions for Event handling
 @JS()
 @staticInterop
 class Event {}
 
 extension EventExtension on Event {
-  external EventTarget? get target;
-}
-
-@JS()
-@staticInterop
-class EventTarget {}
-
-extension EventTargetExtension on EventTarget {
-  external JSDataView? get value;
+  external JSAny? get target;
 }

@@ -80,7 +80,7 @@ extension HTMLInputElementExtension on HTMLInputElement {
   external set type(JSString v);
   external void click();
   external set onchange(JSFunction f);
-  external JSArray<File> get files;
+  external JSArray<JSAny?> get files;
 }
 
 @JS('File')
@@ -89,7 +89,7 @@ class File {}
 
 extension FileExtension on File {
   external JSString get name;
-  external JSPromise<JSArrayBuffer> arrayBuffer();
+  external JSPromise<JSAny?> arrayBuffer();
 }
 
 @JS()
@@ -98,4 +98,12 @@ class CSSStyleDeclaration {}
 
 extension CSSStyleDeclarationExtension on CSSStyleDeclaration {
   external void setProperty(JSString propertyName, JSString value);
+}
+
+@JS('ArrayBuffer')
+@staticInterop
+class JSArrayBuffer {}
+
+extension JSArrayBufferExtension on JSArrayBuffer {
+  external ByteBuffer toDart;
 }
